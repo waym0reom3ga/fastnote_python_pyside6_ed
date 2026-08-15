@@ -1,6 +1,6 @@
 test: binary_size
-  libs: none
-  notes: Self-contained (Nuitka). Only libc/libm/libgcc external.
+  libs: libQt6Core.so.6,libQt6Gui.so.6,libQt6Widgets.so.6,libQt6DBus.so.6,libQt6Network.so.6,libQt6XcbQpa.so.6,libfontconfig.so.1,libfreetype.so.6,libz.so.1
+  notes: Nuitka binary (11.6 MB) + system Qt6 stack. Qt is loaded at runtime via dlopen (not visible in ldd). Total Qt6 footprint ~80 MB on disk.
 
 test: peak_ram_profile
   capable: yes
