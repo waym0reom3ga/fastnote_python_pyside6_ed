@@ -14,17 +14,17 @@ from __future__ import annotations
 import os
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QPalette
+from PySide6.QtGui import QColor, QPalette, QShortcut, QKeySequence
 from PySide6.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
                              QListWidget, QMainWindow, QPlainTextEdit,
                              QPushButton, QSplitter, QVBoxLayout, QWidget)
 
-from .browser import FileBrowser
-from .core import (EDITOR_NAME, VERSION, AppState, NoteError,
+from src.browser import FileBrowser
+from src.core import (EDITOR_NAME, VERSION, AppState, NoteError,
                    action_export_html, action_export_pdf, action_open,
-                   action_save, action_save_as)
-from .export import ensure_new_path
-from .renderer import render_plain
+                   action_save, action_save_as, fn_event)
+from src.export import ensure_new_path
+from src.renderer import render_plain
 
 THEMES = ("light", "dark")
 
@@ -335,17 +335,25 @@ class FastNoteApp:
         self.win.statusBar().showMessage("")
         self.rebuild_controls()
 
-    def run(self, open_path: str | None = None):
+        # Keyboard accelerators (spec 5.2)
+        QShortcut(QKeySequence("Ctrl+O"), self.win, self.on_open)
+        QShortcut(QKeySequence("Ctrl+S"), self.win, self.on_save)
+        QShortcut(QKeySequence("Ctrl+Shift+S"), self.win, self.on_save_as)
+        QShortcut(QKeySequence("Ctrl+E"), self.win,
+                  lambda: self.on_export("html"))
+        QShortcut(QKeySequence("Ctrl+Shift+E"), self.win,
+                  lambda: self.on_export("pdf"))
+
+    def run(self):
         qapp = QApplication.instance() or QApplication([])
         self.gui_mode = True
         self.build_ui()
         self.win.setParent(None)
-        if open_path:
-            self.open_path(open_path)
         self.win.show()
+        fn_event(self.state, "painted")
         qapp.exec()
 
 
 if __name__ == "__main__":
-    from .core import AppState
+    from src.core import AppState
     FastNoteApp(AppState()).run()
