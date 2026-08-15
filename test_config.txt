@@ -1,0 +1,11 @@
+test: binary_size
+  libs: none
+  notes: Self-contained (Nuitka). Only libc/libm/libgcc external.
+
+test: peak_ram_profile
+  capable: yes
+  notes: Requires display.
+
+test: gui_tools
+  capable: yes
+  notes: PySide6.
